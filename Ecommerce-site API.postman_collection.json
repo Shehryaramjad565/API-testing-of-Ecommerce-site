@@ -1,0 +1,931 @@
+{
+	"info": {
+		"_postman_id": "df6a1db1-3e0d-4169-9e6d-2cc2e5ebc227",
+		"name": "Ecommerce-site API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29152880"
+	},
+	"item": [
+		{
+			"name": "create user",
+			"item": [
+				{
+					"name": "New Request",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"//for generating rendom clientName and Email\r",
+									"// Generate random clientName\r",
+									"pm.environment.set(\"clientName\", `user_${Math.random().toString(36).substring(2, 10)}`);\r",
+									"\r",
+									"// Generate random clientEmail\r",
+									"pm.environment.set(\"clientEmail\", `user${Math.random().toString(36).substring(2, 10)}@example.com`);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"create user\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"//seting accessToken\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"pm.environment.set('accesstoken', response.accessToken);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1f1e4fa389c06fae20def8f916c62c89e67683c59ce4e862450eaf7699d3a2fb",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"clientName\": \"{{clientName}}\",\r\n   \"clientEmail\": \"{{clientEmail}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://simple-grocery-store-api.glitch.me/api-clients",
+							"protocol": "https",
+							"host": [
+								"simple-grocery-store-api",
+								"glitch",
+								"me"
+							],
+							"path": [
+								"api-clients"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "products",
+			"item": [
+				{
+					"name": "products",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"get products\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accesstoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ecommBaseURL}}/products",
+							"host": [
+								"{{ecommBaseURL}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "single product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"get single product\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accesstoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ecommBaseURL}}/products/:productId",
+							"host": [
+								"{{ecommBaseURL}}"
+							],
+							"path": [
+								"products",
+								":productId"
+							],
+							"variable": [
+								{
+									"key": "productId",
+									"value": "4643"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Happy Path",
+			"item": [
+				{
+					"name": "Create cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//setting cartId  variable in collection \r",
+									"const response = pm.response.json();\r",
+									"if (response.cartId) {\r",
+									"    pm.collectionVariables.set('cartId', response.cartId);\r",
+									"} else {\r",
+									"    console.error('cartId not found in the response');\r",
+									"}\r",
+									"\r",
+									"//checking response  \r",
+									"pm.test(\"create cart\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accesstoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{ecommBaseURL}}/carts",
+							"host": [
+								"{{ecommBaseURL}}"
+							],
+							"path": [
+								"carts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add item to cart",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"const response = pm.response.json();\r",
+									"pm.collectionVariables.set('itemId', response.itemId);\r",
+									"\r",
+									"\r",
+									"//checking response\r",
+									"pm.test(\"add item to cart\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accesstoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"productId\": 1225\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ecommBaseURL}}/carts/{{cartId}}/items",
+							"host": [
+								"{{ecommBaseURL}}"
+							],
+							"path": [
+								"carts",
+								"{{cartId}}",
+								"items"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "carts",
+			"item": [
+				{
+					"name": "get cart",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//checking response\r",
+									"pm.test(\"get cart\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accesstoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ecommBaseURL}}/carts/:cartId",
+							"host": [
+								"{{ecommBaseURL}}"
+							],
+							"path": [
+								"carts",
+								":cartId"
+							],
+							"variable": [
+								{
+									"key": "cartId",
+									"value": "{{cartId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get cart item",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Fetch `cartId` from collection variables, or use a default value if not found\r",
+									"const cartId = pm.collectionVariables.get('cartId');\r",
+									"\r",
+									"// Set `cartId` in the collection variable (you could also use environment variables)\r",
+									"pm.collectionVariables.set('cartId', cartId);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"get cart item\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accesstoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ecommBaseURL}}/carts/:cartId/items",
+							"host": [
+								"{{ecommBaseURL}}"
+							],
+							"path": [
+								"carts",
+								":cartId",
+								"items"
+							],
+							"variable": [
+								{
+									"key": "cartId",
+									"value": "{{cartId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "modify an item in cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"modify item in cart\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accesstoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"quantity\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ecommBaseURL}}/carts/:cartId/items/:itemId",
+							"host": [
+								"{{ecommBaseURL}}"
+							],
+							"path": [
+								"carts",
+								":cartId",
+								"items",
+								":itemId"
+							],
+							"variable": [
+								{
+									"key": "cartId",
+									"value": "{{cartId}}"
+								},
+								{
+									"key": "itemId",
+									"value": "{{itemId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "replace item in cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//checking response\r",
+									"pm.test(\"replace item in cart\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accesstoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"productId\": 4641,\r\n  \"quantity\": 2\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ecommBaseURL}}/carts/:cartId/items/:itemId",
+							"host": [
+								"{{ecommBaseURL}}"
+							],
+							"path": [
+								"carts",
+								":cartId",
+								"items",
+								":itemId"
+							],
+							"variable": [
+								{
+									"key": "cartId",
+									"value": "{{cartId}}"
+								},
+								{
+									"key": "itemId",
+									"value": "{{itemId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "orders",
+			"item": [
+				{
+					"name": "create order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"pm.collectionVariables.set('orderId', response.orderId);\r",
+									"\r",
+									"//checking response\r",
+									"pm.test(\"create order\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accesstoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"cartId\": \"{{cartId}}\",\r\n    \"customerName\": \"John Doe\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ecommBaseURL}}/orders",
+							"host": [
+								"{{ecommBaseURL}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//checking response\r",
+									"pm.test(\"get order\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accesstoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ecommBaseURL}}/orders",
+							"host": [
+								"{{ecommBaseURL}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get single order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"get single order\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accesstoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ecommBaseURL}}/orders/:orderId",
+							"host": [
+								"{{ecommBaseURL}}"
+							],
+							"path": [
+								"orders",
+								":orderId"
+							],
+							"variable": [
+								{
+									"key": "orderId",
+									"value": "{{orderId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"update order\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accesstoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n \"customerName\": \"shehryar khan\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ecommBaseURL}}/orders/:orderId",
+							"host": [
+								"{{ecommBaseURL}}"
+							],
+							"path": [
+								"orders",
+								":orderId"
+							],
+							"variable": [
+								{
+									"key": "orderId",
+									"value": "{{orderId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "delete folder",
+			"item": [
+				{
+					"name": "delete item in cart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accesstoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{ecommBaseURL}}/carts/:cartId/items/:itemId",
+							"host": [
+								"{{ecommBaseURL}}"
+							],
+							"path": [
+								"carts",
+								":cartId",
+								"items",
+								":itemId"
+							],
+							"variable": [
+								{
+									"key": "cartId",
+									"value": "{{cartId}}"
+								},
+								{
+									"key": "itemId",
+									"value": "{{itemId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"delete order\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accesstoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{ecommBaseURL}}/orders/:orderId",
+							"host": [
+								"{{ecommBaseURL}}"
+							],
+							"path": [
+								"orders",
+								":orderId"
+							],
+							"variable": [
+								{
+									"key": "orderId",
+									"value": "{{orderId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "cartId",
+			"value": ""
+		},
+		{
+			"key": "itemId",
+			"value": ""
+		},
+		{
+			"key": "orderId",
+			"value": ""
+		}
+	]
+}
